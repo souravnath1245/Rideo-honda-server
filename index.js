@@ -25,6 +25,7 @@ async function run() {
     const database = client.db("Rideo-shop");
     const databaseCollection = database.collection("Products");
     const bookingClient = database.collection("Client-Booking");
+    const userCollection = database.collection("Users");
 
     //Get Booking Client
     app.get("/bookingClient", async (req, res) => {
@@ -66,6 +67,55 @@ async function run() {
       console.log("adding Client Id : ", bookingProduct);
       const result = await bookingClient.insertOne(bookingProduct);
       res.json(result);
+    });
+
+    app.get("/users/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const user = await userCollection.findOne(query);
+      let isAdmin = false;
+      if (user?.role === "admin") {
+        isAdmin = true;
+      }
+      res.json({ admin: isAdmin });
+    });
+
+    app.post("/users", async (req, res) => {
+      const users = req.body;
+      const result = await userCollection.insertOne(users);
+      console.log("server is working ", result);
+      res.json(result);
+    });
+    app.put("/users", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: user,
+      };
+      const result = await userCollection.updateOne(filter, updateDoc, options);
+      res.json(result);
+    });
+
+    app.put("/users/admin", async (req, res) => {
+      const user = req.body;
+      const filter = { email: user.email };
+      const updateDoc = { $set: { role: "admin" } };
+      const result = await userCollection.updateOne(filter, updateDoc);
+      res.json(result);
+      // const requester = req.decodedEmail;
+      // if (requester) {
+      //     const requesterAccount = await usersCollection.findOne({ email: requester });
+      //     if (requesterAccount.role === 'admin') {
+      //         const filter = { email: user.email };
+      //         const updateDoc = { $set: { role: 'admin' } };
+      //         const result = await usersCollection.updateOne(filter, updateDoc);
+      //         res.json(result);
+      //     }
+      // }
+      // else {
+      //     res.status(403).json({ message: 'you do not have access to make admin' })
+      // }
     });
   } finally {
     // await client.close()
