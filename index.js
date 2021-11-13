@@ -12,8 +12,7 @@ app.use(express.json());
 // rideo-shop
 // qSWCft37tDIzGBYl
 
-const uri =
-  `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nnyci.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.nnyci.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -37,15 +36,23 @@ async function run() {
       const clients = await cursor.toArray();
       res.json(clients);
     });
+    // Get product
+    app.get("/bookingClient", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const cursor = bookingClient.find(query);
+      const clients = await cursor.toArray();
+      res.json(clients);
+    });
 
     //Delete Api:
-    app.delete("/bookingClient/:id", async(req, res)=>{
+    app.delete("/bookingClient/:id", async (req, res) => {
       const id = req.params.id;
-      const query = {_id: ObjectId(id)};
+      const query = { _id: ObjectId(id) };
       console.log(query);
       const result = await bookingClient.deleteOne(query);
-      res.send(result)
-    })
+      res.send(result);
+    });
 
     // Get Single Product
     app.get("/products/:id", async (req, res) => {
@@ -62,11 +69,11 @@ async function run() {
       const result = await product.toArray();
       res.send(result);
     });
-    app.get("/reviews", async(req,res)=>{
+    app.get("/reviews", async (req, res) => {
       const review = clientReviews.find({});
-      const result=await review.toArray()
-      res.send(result)
-    })
+      const result = await review.toArray();
+      res.send(result);
+    });
 
     //Post Product
     app.post("/products", async (req, res) => {
@@ -102,13 +109,12 @@ async function run() {
       res.json(result);
     });
 
-    app.post("/reviews", async(req, res)=>{
+    app.post("/reviews", async (req, res) => {
       const review = req.body;
-      const result = await clientReviews.insertOne(review)
+      const result = await clientReviews.insertOne(review);
       console.log("we got client Reviews ", review);
-      res.json(result)
-
-    })
+      res.json(result);
+    });
     app.put("/users", async (req, res) => {
       const user = req.body;
       const filter = { email: user.email };
@@ -119,7 +125,6 @@ async function run() {
       const result = await userCollection.updateOne(filter, updateDoc, options);
       res.json(result);
     });
-
 
     app.put("/users/admin", async (req, res) => {
       const user = req.body;
