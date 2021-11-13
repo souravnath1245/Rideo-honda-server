@@ -37,7 +37,7 @@ async function run() {
       res.json(clients);
     });
     // Get product
-    app.get("/bookingClient", async (req, res) => {
+    app.get("/bookingClient/client", async (req, res) => {
       const email = req.query.email;
       const query = { email: email };
       const cursor = bookingClient.find(query);
@@ -78,7 +78,7 @@ async function run() {
     //Post Product
     app.post("/products", async (req, res) => {
       const newProduct = req.body;
-      const result = await productBooking.insertOne(newProduct);
+      const result = await databaseCollection.insertOne(newProduct);
       console.log("Hitting The Post Products", result);
       res.json(result);
     });
