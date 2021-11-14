@@ -44,6 +44,15 @@ async function run() {
       const clients = await cursor.toArray();
       res.json(clients);
     });
+
+    //Delete Orders :
+    app.delete("/bookingClient/client/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await bookingClient.deleteOne(query);
+      console.log(result);
+      res.send(result);
+    });
     //Get All Products
     app.get("/allorders", async (req, res) => {
       const cursor = bookingClient.find({});
@@ -62,7 +71,6 @@ async function run() {
       const query = { _id: ObjectId(id) };
       console.log(query);
       const result = await databaseCollection.deleteOne(query);
-      // console.log(result);
       res.send(result);
     });
 
