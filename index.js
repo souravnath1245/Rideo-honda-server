@@ -44,6 +44,27 @@ async function run() {
       const clients = await cursor.toArray();
       res.json(clients);
     });
+    //Get All Products
+    app.get("/allorders", async (req, res) => {
+      const cursor = bookingClient.find({});
+      const clients = await cursor.toArray();
+      res.json(clients);
+    });
+    // Get All Products
+    app.get("/allProducts", async (req, res) => {
+      const cursor = databaseCollection.find({});
+      const clients = await cursor.toArray();
+      res.json(clients);
+    });
+    // Delete Product
+    app.delete("/allProducts/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      console.log(query);
+      const result = await databaseCollection.deleteOne(query);
+      // console.log(result);
+      res.send(result);
+    });
 
     //Delete Api:
     app.delete("/bookingClient/:id", async (req, res) => {
